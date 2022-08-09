@@ -1,0 +1,203 @@
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&display=swap');
+
+
+:root {
+  --soft-red: hsl(10, 79%, 65%);
+  --cyan: hsl(186, 34%, 60%);
+  --dark-brown: hsl(25, 47%, 15%);
+  --medium-brown: hsl(28, 10%, 53%);
+  --cream: hsl(27, 66%, 92%);
+  --very-pale-orange: hsl(33, 100%, 98%);
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+}
+
+body, main {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  background: var(--cream);
+}
+
+main {
+  width: clamp(200px, 92%, 550px);
+  flex-direction: column;
+  row-gap: 1rem;
+  font-family: 'DM Sans', serif;
+  font-size: 18px;
+  margin: 1rem 0;
+}
+
+.balance {
+  background: var(--soft-red);
+  justify-content: space-between;
+  align-items: center;
+}
+
+.balance .head {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: var(--very-pale-orange);
+}
+
+.balance .head + p, .spending .total-spending {
+  font-size: 16px;
+}
+
+.balance .wallet {
+  font-size: clamp(1.75rem, calc(1vw + 1vh + .9rem), 2rem);
+}
+
+.balance .wallet, .spending .period {
+  font-weight: 700;
+  padding-top: .5rem;
+}
+
+.balance, .spending {
+  display: flex;
+  padding: 1.3rem;
+  width: 100%;
+  border-radius: 12px;
+}
+
+
+.spending .period {
+  font-size: clamp(1.5rem, calc(1vw + 1vh + .9rem), 2rem);
+}
+
+.spending {
+  background: white;
+  flex-direction: column;
+}
+
+.total-spending {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.total-spending .subtitle {
+  width: 100%;
+}
+
+.period, .total, .extra-costs .portion {
+  color: var(--dark-brown);
+  font-weight: 700;
+}
+
+.period {
+  font-size: 2rem;
+}
+
+.total {
+  font-size: clamp(2rem, calc(1.5vw + 2vh + 50% + .5rem), 3rem);
+  line-height: 95%;
+  align-self: flex-end;
+}
+
+.extra-costs {
+  display: flex;
+  flex-direction: column;
+}
+
+.extra-costs .portion {
+  font-size: 1.2rem;
+  align-self: flex-end;
+}
+
+.total-spending .subtitle, .extra-costs .description {
+  color: var(--medium-brown);
+}
+
+.chart {
+  height: 300px;
+  padding-top: 15%;
+  margin-bottom: 8%;
+  display: flex;
+  align-items: flex-end;
+  column-gap: 4%;
+  border-bottom: solid var(--cream) 2px;
+}
+
+.chart-column {
+  width: 100%;
+  height: 100%;
+}
+
+.chart-column .bar {
+  background: var(--soft-red);
+  border-radius: 5px;
+  position: relative;
+  width: 100%;
+  transform: translateY(-100%);
+  top: 100%;
+
+  animation: animebar 2s ease-out;
+}
+
+.chart-column .bar:hover {
+  filter: brightness(1.3);
+}
+
+.today-spending .bar {
+  background: var(--cyan)
+}
+
+.bar-container {
+  width: 100%;
+  height: 77.5%;
+}
+
+.chart-column .day-tag {
+  font-size: max(.75rem, min(calc(1vw + 1vh), .85rem));
+  text-align: center;
+  line-height: 2.5rem;
+  color: var(--medium-brown);
+  height: 22.5%;
+}
+
+.bar:hover::before {
+  content: '$' attr(amount);
+  display: block;
+  box-sizing: border-box;
+  position: absolute;
+  border-radius: 5px;
+  padding: .75rem .1rem;
+  transform: translate(-11.54%, -130%);
+  background: var(--dark-brown);
+  width: 130%;
+  font-family: 'DM Sans', serif;
+  font-size: max(.7rem, min(calc(1vw + 1vh), 1rem));
+  font-weight: 700;
+  text-align: center;
+  color: var(--very-pale-orange);
+}
+
+.total-spending .subtitle {
+  padding-bottom: .5rem;
+}
+
+
+@keyframes animebar {
+  from {
+    max-height: 1%;
+  }
+  to {
+    max-height: 100%;
+  }
+}
