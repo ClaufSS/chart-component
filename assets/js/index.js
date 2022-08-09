@@ -1,7 +1,4 @@
 
-const chart = document.querySelector('.chart');
-
-
 const createElement = (tagName, classList, attributes) => {
   const element = document.createElement(tagName);
 
@@ -23,7 +20,7 @@ const createElementsGroup = (tagName, elementStatements) => elementStatements
 const appendChilds = (parent, childs) => childs?.forEach(child => parent.appendChild(child)); 
 
 
-const createSpendingChartColumn = spending => {
+const createChartColumn = spending => {
   const [column, barContainer, bar, dayTag] = createElementsGroup('div', [
     { classList: ['chart-column'] },
     { classList: ['bar-container'] },
@@ -39,38 +36,38 @@ const createSpendingChartColumn = spending => {
   appendChilds(barContainer, [bar]);
   appendChilds(column, [barContainer, dayTag]);
 
-  spending.columnNode = column;
+  return {element: column, ...spending};
 }
 
 
-const addColumnToChart = ({columnNode}) => chart.appendChild(columnNode);
+const addColumnToChart = (columnNode, chart) => chart.appendChild(columnNode);
 
 
-const setHeightWeightToColumnBar = ({columnNode, weight}) => {
+const setHeightWeightToColumnBar = (columnNode, weight) => {
   const bar = columnNode.querySelector('.bar');
   
   bar.style.height = `${weight * 100}%`;
 }
 
 
-const getBiggerCost = spendingsList => spendingsList.reduce((acc, { amount }) => Math.max(acc, amount), 0);
+const getBiggestSpend = spendingList => spendingList.reduce((acc, { amount }) => Math.max(acc, amount), 0);
 
 
-const defineWeightCost = spendingsList => {
-  const biggerCost = getBiggerCost(spendingsList);
+const defineWeightBasedOnSpend = chartColumnList => {
+  const biggerCost = getBiggestSpend(chartColumnList);
 
-  spendingsList.forEach(spending => spending.weight = spending.amount / biggerCost);
+  chartColumnList.forEach(columnItem => columnItem.weight = columnItem.amount / biggerCost);
 }
 
 
-async function highlightColumnOfDay(spendingsList) {
+async function highlightColumnOfDay(chartColumnList) {
   const { getDayName } = await import('./getday.js');
 
   const todayName = getDayName();
 
-  spendingsList.forEach(spending => {
-    if (spending.day === todayName.slice(0, 3)) {
-      spending.columnNode.classList.add('today-spending')
+  chartColumnList.forEach(columnItem => {
+    if (columnItem.day === todayName.slice(0, 3)) {
+      columnItem.element.classList.add('today-spending')
     }
   })
 } 
@@ -78,17 +75,14 @@ async function highlightColumnOfDay(spendingsList) {
 
 fetch('./assets/data/data.json')
   .then(response => response.json())
-  .then(spendingLastSevenDays => {
+  .then(spendingLastSevenDays => spendingLastSevenDays.map(createChartColumn))
+  .then(chartColumnList => {
+    const chart = document.querySelector('.chart');
 
-    defineWeightCost(spendingLastSevenDays);
+    defineWeightBasedOnSpend(chartColumnList);
+    highlightColumnOfDay(chartColumnList);
 
-    spendingLastSevenDays.forEach(createSpendingChartColumn);
-    spendingLastSevenDays.forEach(addColumnToChart);
-
-    highlightColumnOfDay(spendingLastSevenDays);
-
-    spendingLastSevenDays.forEach(setHeightWeightToColumnBar);
-
-
+    chartColumnList.forEach(columnItem => addColumnToChart(columnItem.element, chart));
+    chartColumnList.forEach(({element, weight}) => setHeightWeightToColumnBar(element, weight));
   })
   .catch(e => console.log(e))
